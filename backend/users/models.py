@@ -5,7 +5,11 @@ from django.db import models
 class User(AbstractUser):
     """Модель для пользователей"""
 
-    username = models.CharField("Уникальный юзернейм", max_length=150, unique=True)
+    username = models.CharField(
+        "Уникальный юзернейм",
+        max_length=150,
+        unique=True
+    )
     password = models.CharField(
         "Пароль",
         max_length=150,
@@ -51,7 +55,8 @@ class Follow(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "author"], name="Вы уже подписаны на данного автора"
+                fields=["user", "author"],
+                name="Вы уже подписаны на данного автора"
             ),
         ]
         ordering = ["-id"]

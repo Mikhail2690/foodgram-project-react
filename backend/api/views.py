@@ -48,7 +48,8 @@ class UsersViewSet(UserViewSet):
                 {"message": "Нельзя подписаться на себя"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        follow = Follow.objects.get_or_create(user=request.user, author=follower)
+        follow = Follow.objects.get_or_create(user=request.user,
+                                              author=follower)
         serializer = FollowSerializer(follow[0])
         return Response(
             serializer.data,
@@ -58,9 +59,8 @@ class UsersViewSet(UserViewSet):
     def unsubscribed(self, request, id=None):
         follower = get_object_or_404(User, id=id)
         Follow.objects.filter(user=request.user, author=follower).delete()
-        return Response(
-            {"message": "Вы успешно отписаны"}, status=status.HTTP_204_NO_CONTENT
-        )
+        return Response({"message": "Вы успешно отписаны"},
+                        status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=True,
@@ -73,7 +73,8 @@ class UsersViewSet(UserViewSet):
         return self.unsubscribed(request, id)
 
     @action(
-        detail=False, methods=["get"], permission_classes=[permissions.IsAuthenticated]
+        detail=False, methods=["get"],
+        permission_classes=[permissions.IsAuthenticated]
     )
     def subscriptions(self, request):
         following = Follow.objects.filter(user=request.user)
@@ -125,15 +126,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     @action(
-        detail=True, methods=["post", "delete"], permission_classes=[IsAuthenticated]
+        detail=True, methods=["post", "delete"],
+        permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, pk):
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == "POST":
             Favorite.objects.create(user=request.user, recipe=recipe)
             serializer = RecipeFollowerSerializer(recipe)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        deleted = get_object_or_404(Favorite, user=request.user, recipe=recipe)
+            return Response(data=serializer.data,
+                            status=status.HTTP_201_CREATED)
+        deleted = get_object_or_404(Favorite, user=request.user,
+                                    recipe=recipe)
         deleted.delete()
         return Response(
             {"message": "Рецепт успешно удален из избранного"},
@@ -141,22 +145,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     @action(
-        detail=True, methods=["post", "delete"], permission_classes=[IsAuthenticated]
+        detail=True, methods=["post", "delete"],
+        permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request, pk):
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == "POST":
             ShoppingCart.objects.create(user=request.user, recipe=recipe)
             serializer = RecipeFollowerSerializer(recipe)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        delete = get_object_or_404(ShoppingCart, user=request.user, recipe=recipe)
+            return Response(data=serializer.data,
+                            status=status.HTTP_201_CREATED)
+        delete = get_object_or_404(ShoppingCart, user=request.user,
+                                   recipe=recipe)
         delete.delete()
         return Response(
             {"message": "Рецепт успешно удален из покупок"},
             status=status.HTTP_204_NO_CONTENT,
         )
 
-    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=["get"],
+            permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         user = request.user
         ingredients = (
@@ -168,7 +176,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             "ingredient__name", "ingredient__measurement_unit", "amount"
         )
         shopping_cart = "\n".join(
-            [f"{name} {amount} {measure}" for name, measure, amount in data_list]
+            [f"{name} {amount} {measure}"
+             for name, measure, amount in data_list]
         )
         response = HttpResponse(shopping_cart, content_type="text/plain")
         return response

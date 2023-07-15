@@ -19,7 +19,8 @@ class Command(BaseCommand):
             file.seek(0)
 
             ingredients = [
-                Ingredient(name=row[0], measurement_unit=row[1]) for row in file_reader
+                Ingredient(
+                    name=row[0], measurement_unit=row[1])for row in file_reader
             ]
 
             for i, _ in enumerate(ingredients, 1):
@@ -28,7 +29,8 @@ class Command(BaseCommand):
 
         Ingredient.objects.bulk_create(ingredients)
 
-        self.stdout.write(self.style.SUCCESS("=== Данные успешно загружены ==="))
+        self.stdout.write(
+            self.style.SUCCESS("=== Данные успешно загружены ==="))
 
     def update_progress(self, progress):
         width = 30

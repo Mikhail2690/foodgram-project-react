@@ -51,7 +51,8 @@ class UsersSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "id", "username", "first_name", "last_name", "is_subscribed")
+        fields = ("email", "id", "username", "first_name",
+                  "last_name", "is_subscribed")
 
     def get_is_subscribed(self, obj):
         user = self.context.get("request").user
@@ -176,7 +177,8 @@ class RecipeCreateSerializer(ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
-            current_ingredient = get_object_or_404(Ingredient, id=ingredient.get("id"))
+            current_ingredient = get_object_or_404(Ingredient,
+                                                   id=ingredient.get("id"))
             IngredientsAmount.objects.create(
                 ingredient=current_ingredient,
                 recipe=recipe,
@@ -189,7 +191,8 @@ class RecipeCreateSerializer(ModelSerializer):
         tags = validated_data.pop("tags")
         IngredientsAmount.objects.filter(recipe=recipe).delete()
         for ingredient_data in ingredients:
-            ingredient = get_object_or_404(Ingredient, id=ingredient_data.get("id"))
+            ingredient = get_object_or_404(Ingredient,
+                                           id=ingredient_data.get("id"))
             IngredientsAmount.objects.create(
                 recipe=recipe,
                 ingredient=ingredient,
@@ -207,7 +210,9 @@ class RecipeCreateSerializer(ModelSerializer):
     def validate_ingredients(self, ingredients):
         for ingredient in ingredients:
             if int(ingredient["amount"]) <= 0:
-                raise ValidationError("Количество ингредиентов должно быть больше 0")
+                raise ValidationError(
+                    "Количество ингредиентов должно быть больше 0"
+                )
         return ingredients
 
 
