@@ -1,6 +1,10 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+
 from users.models import User
+
+MIN_VALUE = 1
+MAX_VALUE = 32000
 
 
 class Tag(models.Model):
@@ -91,8 +95,11 @@ class Recipe(models.Model):
         "Время приготовления (в минутах)",
         validators=[
             MinValueValidator(
-                1, message="Время приготовления блюда должно быть больше 0"
-            )
+                MIN_VALUE,
+                message="Время приготовления должно быть больше 0"),
+            MaxValueValidator(
+                MAX_VALUE,
+                message="Время приготовления должно быть не больше 32000")
         ],
     )
 
@@ -122,11 +129,20 @@ class IngredientsAmount(models.Model):
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
+        validators=[
+            MinValueValidator(
+                MIN_VALUE,
+                message="Количество ингредиентов должно быть больше 0"),
+            MaxValueValidator(
+                MAX_VALUE,
+                message="Количество ингредиентов не должно быть больше 32000")
+        ],
     )
 
     class Meta:
         verbose_name = "Количество ингридиент"
         verbose_name_plural = "Количество ингридиентов"
+        ordering = ("ingredient",)
 
     def __str__(self):
         return f"{self.amount} {self.ingredient}"
@@ -151,6 +167,10 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = "Список избранного"
         verbose_name_plural = "Список избранного"
+        ordering = ("recipe",)
+
+    def __str__(self):
+        return f"{self.user} {self.recipe}"
 
 
 class ShoppingCart(models.Model):
@@ -172,3 +192,7 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = "Список покупок"
         verbose_name_plural = "Список покупок"
+        ordering = ("recipe",)
+
+    def __str__(self):
+        return f"{self.user} {self.recipe}"

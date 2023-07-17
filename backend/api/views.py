@@ -1,34 +1,24 @@
 from django.db.models import Sum
 from django.http import HttpResponse
+
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (
-    IngredientsAmount,
-    Favorite,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
+from recipes.models import (Favorite, Ingredient, IngredientsAmount, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Follow, User
 
 from .filters import RecipeFilter
 from .pagination import LimitPagePagination
 from .permissions import AdminOrAuthor, AdminOrReadOnly
-from .serializers import (
-    FollowSerializer,
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeSerializer,
-    TagSerializer,
-    UsersSerializer,
-    RecipeFollowerSerializer,
-)
+from .serializers import (FollowSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeFollowerSerializer,
+                          RecipeSerializer, TagSerializer, UsersSerializer)
 
 
 class UsersViewSet(UserViewSet):
@@ -43,18 +33,11 @@ class UsersViewSet(UserViewSet):
 
     def subscribed(self, request, id=None):
         follower = get_object_or_404(User, id=id)
-        if request.user == follower:
-            return Response(
-                {"message": "Нельзя подписаться на себя"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        follow = Follow.objects.get_or_create(user=request.user,
-                                              author=follower)
-        serializer = FollowSerializer(follow[0])
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
+        follow, _ = Follow.objects.get_or_create(
+            user=request.user, author=follower
         )
+        serializer = FollowSerializer(follow)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def unsubscribed(self, request, id=None):
         follower = get_object_or_404(User, id=id)
@@ -62,22 +45,17 @@ class UsersViewSet(UserViewSet):
         return Response({"message": "Вы успешно отписаны"},
                         status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        detail=True,
-        methods=["post", "delete"],
-        permission_classes=[permissions.IsAuthenticated],
-    )
+    @action(detail=True, methods=["post", "delete"],
+            permission_classes=[permissions.IsAuthenticated])
     def subscribe(self, request, id):
         if request.method == "POST":
             return self.subscribed(request, id)
         return self.unsubscribed(request, id)
 
-    @action(
-        detail=False, methods=["get"],
-        permission_classes=[permissions.IsAuthenticated]
-    )
+    @action(detail=False, methods=["get"],
+            permission_classes=[permissions.IsAuthenticated])
     def subscriptions(self, request):
-        following = Follow.objects.filter(user=request.user)
+        following = request.user.follower.all()
         pages = self.paginate_queryset(following)
         serializer = FollowSerializer(pages, many=True)
         return self.get_paginated_response(serializer.data)

@@ -4,6 +4,7 @@ from time import sleep
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+
 from recipes.models import Ingredient
 
 DATA_ROOT = os.path.join(settings.BASE_DIR, "data/ingredients.csv")
