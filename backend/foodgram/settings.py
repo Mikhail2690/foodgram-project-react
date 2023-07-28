@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-+dhq3lettjh+4txxjf4oj#vza@&tj7^!_81b$s53gc0(exg-3y
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+ALLOWED_HOSTS = ['158.160.67.220', '127.0.0.1', 'localhost', 'foodgram999.ddns.net']
 
 
 # Application definition
@@ -28,13 +28,13 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'djoser',
-    #'corsheaders', # удалить после тестов
+    # 'corsheaders', # удалить после тестов
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'corsheaders.middleware.CorsMiddleware', # не забыть удалить
+    # 'corsheaders.middleware.CorsMiddleware', # не забыть удалить
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -125,12 +125,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATIC_ROOT = BASE_DIR / 'collected_static'
+STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-#MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -163,5 +161,5 @@ DJOSER = {
                     },
 }
 
-#CORS_ORIGIN_ALLOW_ALL = True # удалить
-#CORS_URLS_REGEX = r'^/api/.*$' # удалить
+# CORS_ORIGIN_ALLOW_ALL = True # удалить
+# CORS_URLS_REGEX = r'^/api/.*$' # удалить

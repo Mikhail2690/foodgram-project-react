@@ -10,8 +10,6 @@ from rest_framework.serializers import (CharField, EmailField, Field,
 from recipes.models import (Ingredient, IngredientsAmount, Recipe, Tag)
 from users.models import User
 
-from .filters import RecipeFilter
-
 
 class CreateUserSerializer(UserCreateSerializer):
     """Сериализатор для регистрации пользователей"""
@@ -89,9 +87,9 @@ class IngredientCreateSerializer(ModelSerializer):
 class ReadIngredientsInRecipeSerializer(ModelSerializer):
     """Сериализатор для чтения ингредиентов в рецепте"""
 
-    id = ReadOnlyField(source="ingredients.id")
-    name = ReadOnlyField(source="ingredients.name")
-    measurement_unit = ReadOnlyField(source="ingredients.measurement_unit")
+    id = ReadOnlyField(source="ingredient.id")
+    name = ReadOnlyField(source="ingredient.name")
+    measurement_unit = ReadOnlyField(source="ingredient.measurement_unit")
 
     class Meta:
         model = IngredientsAmount
@@ -127,7 +125,6 @@ class RecipeSerializer(ModelSerializer):
             "cooking_time",
             'is_in_shopping_cart',
         )
-        filter_class = RecipeFilter
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get("request").user
@@ -142,7 +139,7 @@ class RecipeSerializer(ModelSerializer):
         return False
 
     def get_ingredients(self, obj):
-        ingredients = obj.ingredient_amount.all()
+        ingredients = obj.ingredient_amount.filter(recipe=obj)
         return ReadIngredientsInRecipeSerializer(ingredients, many=True).data
 
 
@@ -270,7 +267,7 @@ class FollowSerializer(ModelSerializer):
         )
 
     def get_recipes_count(self, obj):
-        return obj.author.recipes.count()
+        return obj.author.recipes.filter(user=obj.user).count()
 
     def get_is_subscribed(self, obj):
         return obj.author.follower.filter(user=obj.user).exists()

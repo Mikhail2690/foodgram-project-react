@@ -13,7 +13,7 @@ from recipes.models import (Favorite, Ingredient, IngredientsAmount, Recipe,
                             ShoppingCart, Tag)
 from users.models import Follow, User
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, IngredientFilter
 from .pagination import LimitPagePagination
 from .permissions import AdminOrAuthor, AdminOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
@@ -77,7 +77,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (AdminOrReadOnly,)
     pagination_class = None
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientFilter,)
     search_fields = ("^name",)
 
 
@@ -89,6 +89,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = LimitPagePagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+
+    def get_queryset(self):
+        recipes = Recipe.objects.prefetch_related(
+            "ingredient_amount__ingredient", "tags").all()
+        return recipes
 
     def get_serializer_class(self):
         if self.action == "list":
