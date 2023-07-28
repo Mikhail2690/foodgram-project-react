@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.test import Client, TestCase
 
+
 class FoodGramAPITestCase(TestCase):
     def setUp(self):
         self.guest_client = Client()
