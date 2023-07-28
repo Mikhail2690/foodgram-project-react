@@ -8,21 +8,19 @@ volumes:
 services:
   db:
     image: postgres:13.10
-    env_file: ../.env
+    env_file: ./.env
     volumes:
       - pg_data:/var/lib/postgresql/data
   backend:
-    build: ../backend/
-    env_file: ../.env
+    image: fedorenko90/foodgram_backend:latest
+    env_file: ./.env
     volumes:
       - static:/app/static/
       - media:/app/media/
     depends_on:
       - db
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: fedorenko90/foodgram_frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
@@ -30,7 +28,7 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - /home/yc-user/foodgram/nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static:/var/html/static/
