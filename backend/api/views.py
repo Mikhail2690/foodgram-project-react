@@ -112,38 +112,38 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True, methods=["post", "delete"],
         permission_classes=[IsAuthenticated]
     )
-    def favorite(self, request, pk):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == "POST":
-            Favorite.objects.create(user=request.user, recipe=recipe)
-            serializer = RecipeFollowerSerializer(recipe)
-            return Response(data=serializer.data,
-                            status=status.HTTP_201_CREATED)
-        deleted = get_object_or_404(Favorite, user=request.user,
-                                    recipe=recipe)
-        deleted.delete()
-        return Response(
-            {"message": "Рецепт успешно удален из избранного"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
-
-    @action(
-        detail=True, methods=["post", "delete"],
-        permission_classes=[IsAuthenticated]
-    )
-    def shopping_cart(self, request, pk):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == "POST":
-            ShoppingCart.objects.create(user=request.user, recipe=recipe)
-            serializer = RecipeFollowerSerializer(recipe)
-            return Response(data=serializer.data,
-                            status=status.HTTP_201_CREATED)
-        delete = get_object_or_404(ShoppingCart, user=request.user,
-                                   recipe=recipe)
-        delete.delete()
-        return Response(
-            {"message": "Рецепт успешно удален из покупок"},
-            status=status.HTTP_204_NO_CONTENT,
+    def favorite(self, request, pk): 
+        recipe = get_object_or_404(Recipe, pk=pk) 
+        if request.method == "POST": 
+            Favorite.objects.create(user=request.user, recipe=recipe) 
+            serializer = RecipeFollowerSerializer(recipe) 
+            return Response(data=serializer.data, 
+                            status=status.HTTP_201_CREATED) 
+        deleted = get_object_or_404(Favorite, user=request.user, 
+                                    recipe=recipe) 
+        deleted.delete() 
+        return Response( 
+            {"message": "Рецепт успешно удален из избранного"}, 
+            status=status.HTTP_204_NO_CONTENT, 
+        ) 
+ 
+    @action( 
+        detail=True, methods=["post", "delete"], 
+        permission_classes=[IsAuthenticated] 
+    ) 
+    def shopping_cart(self, request, pk): 
+        recipe = get_object_or_404(Recipe, pk=pk) 
+        if request.method == "POST": 
+            ShoppingCart.objects.create(user=request.user, recipe=recipe) 
+            serializer = RecipeFollowerSerializer(recipe) 
+            return Response(data=serializer.data, 
+                            status=status.HTTP_201_CREATED) 
+        delete = get_object_or_404(ShoppingCart, user=request.user, 
+                                   recipe=recipe) 
+        delete.delete() 
+        return Response( 
+            {"message": "Рецепт успешно удален из покупок"}, 
+            status=status.HTTP_204_NO_CONTENT, 
         )
 
     @action(detail=False, methods=["get"],
