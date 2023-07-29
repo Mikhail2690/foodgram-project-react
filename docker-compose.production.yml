@@ -35,4 +35,4 @@ services:
       - media:/var/html/media/
     depends_on:
       - frontend
-# что то гдето
+# metka
