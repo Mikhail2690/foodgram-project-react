@@ -10,6 +10,9 @@ from rest_framework.serializers import (CharField, EmailField, Field,
 from recipes.models import (Ingredient, IngredientsAmount, Recipe, Tag)
 from users.models import User
 
+MIN_VALUE = 0
+MAX_VALUE = 32000
+
 
 class CreateUserSerializer(UserCreateSerializer):
     """Сериализатор для регистрации пользователей"""
@@ -73,11 +76,11 @@ class IngredientCreateSerializer(ModelSerializer):
         fields = ("id", "amount",)
 
     def validate_amount(self, amount):
-        if amount <= 0:
+        if amount <= MIN_VALUE:
             raise ValidationError(
                 'Количество ингредиента должно быть больше 0'
             )
-        if amount > 32000:
+        if amount > MAX_VALUE:
             raise ValidationError(
                 'Количество ингредиента не должно превышать 32000'
             )
@@ -202,11 +205,11 @@ class RecipeCreateSerializer(ModelSerializer):
         return data
 
     def validate_cooking_time(self, cooking_time):
-        if cooking_time <= 0:
+        if cooking_time <= MIN_VALUE:
             raise ValidationError(
                 'Время приготовления должно быть больше 0'
             )
-        if cooking_time > 32000:
+        if cooking_time > MAX_VALUE:
             raise ValidationError(
                 'Время приготовления должно быть не больше 32000'
             )
