@@ -1,6 +1,6 @@
 # Проект Foodgram – Продуктовый помощник
 
-## Сайт доступен по адресу foodgram999.ddns.net
+## Сайт доступен по адресу [https://foodgram999.ddns.net](https://foodgram999.ddns.net)
 
 ## Описание проекта.
 
